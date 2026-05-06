@@ -9,7 +9,8 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 public class ControladorRegistroTest {
 
     private final String email = "flor@mail.com";
-    private final String password = "1234";
+    private final String password = "1234567";
+    private final String passwordMenos6Caracteres = "1234";
 
     /*
     * 1. el registro es exitoso si se ingresa email y password
@@ -70,5 +71,14 @@ public class ControladorRegistroTest {
         DatosRegistro datosRegistro = new DatosRegistro(email, "");
         ModelAndView modelAndView = whenRegistroUsuario(datosRegistro);
         thenElRegistroFalla(modelAndView, "El password es obligatorio");
+    }
+
+    @Test
+    public void elRegistroFallaSiLaPasswordTieneMenosDe6Caracteres() {
+        givenNoExisteUsuario();
+        DatosRegistro datosRegistro = new DatosRegistro(email, passwordMenos6Caracteres);
+        ModelAndView modelAndView = whenRegistroUsuario(datosRegistro);
+        thenElRegistroFalla(modelAndView, "La contraseña debe tener al menos 6 caracteres");
+
     }
 }

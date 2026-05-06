@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+  <form th:action="@{/buscar-producto}" method="POST">
+      <label>Buscar producto por ID:</label>
+    <input type="number" name="id" required />
+      <button type="submit">
+          Buscar
+      </button>
+  </form>
+
+
+</body>
+</html>

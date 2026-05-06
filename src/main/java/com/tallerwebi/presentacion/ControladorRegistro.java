@@ -17,6 +17,12 @@ public class ControladorRegistro {
             model.put("error", "El password es obligatorio");
             return new ModelAndView("registro", model);
         }
+
+        if (datosRegistro.getPassword().length() < 6) {
+            model.put("error", "La contraseña debe tener al menos 6 caracteres");
+            return new ModelAndView("registro", model);
+        }
+
         model.put("mensaje", "El registro fue exitoso");
         return new ModelAndView("login", model);
     }
