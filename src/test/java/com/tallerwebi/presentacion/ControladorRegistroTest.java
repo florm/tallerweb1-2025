@@ -1,10 +1,15 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.PasswordInvalidaException;
+import com.tallerwebi.dominio.ServicioRegistro;
+import com.tallerwebi.dominio.ServicioRegistroImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 public class ControladorRegistroTest {
 
@@ -24,7 +29,9 @@ public class ControladorRegistroTest {
     * 7. el registro falla si ya existe un usuario con el mismo email
     * */
 
-    ControladorRegistro controladorRegistro = new ControladorRegistro();
+    ServicioRegistro servicioRegistro = mock(ServicioRegistroImpl.class);
+
+    ControladorRegistro controladorRegistro = new ControladorRegistro(servicioRegistro);
 
     @Test
     public void siSeIngresaEmailYPasswordElRegistroExitoso() {
@@ -76,9 +83,13 @@ public class ControladorRegistroTest {
     @Test
     public void elRegistroFallaSiLaPasswordTieneMenosDe6Caracteres() {
         givenNoExisteUsuario();
+        //setear el comportamiento de mi mock de servicioRegistro
+        doThrow(PasswordInvalidaException.class).when(servicioRegistro).registrar(email, passwordMenos6Caracteres);
+
         DatosRegistro datosRegistro = new DatosRegistro(email, passwordMenos6Caracteres);
         ModelAndView modelAndView = whenRegistroUsuario(datosRegistro);
         thenElRegistroFalla(modelAndView, "La contraseña debe tener al menos 6 caracteres");
+
 
     }
 }
