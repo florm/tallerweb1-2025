@@ -1,12 +1,15 @@
 package com.tallerwebi.dominio;
 
 
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.infraestructura.RepositorioRegistroImpl;
 import org.junit.jupiter.api.Test;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 public class ServicioRegistroTest {
 
@@ -19,7 +22,8 @@ public class ServicioRegistroTest {
     private final String passwordInvalida = "1234";
     private final String password = "1234567hhh";
 
-    ServicioRegistro servicioRegistro = new ServicioRegistroImpl();
+    RepositorioRegistro repositorioRegistro = mock(RepositorioRegistroImpl.class);
+    ServicioRegistro servicioRegistro = new ServicioRegistroImpl(repositorioRegistro);
 
     @Test
     public void siIngresoEmailYPsswordElRegitroEsExitoso() {
@@ -43,6 +47,7 @@ public class ServicioRegistroTest {
     }
 
     private void thenElRegistroEsExitoso(Usuario usuarioCreado) {
+        verify(repositorioRegistro, times(1)).guardar(usuarioCreado);
         assertThat(usuarioCreado, is(notNullValue()));
     }
 
@@ -52,5 +57,19 @@ public class ServicioRegistroTest {
     }
 
     private void givenUsuarioNoExiste() {
+    }
+
+    @Test
+    public void siYaExisteUsuarioConMismoMailElRegistroFalla() {
+        //dado que existe un usuario con email "flor@gmail.com"
+
+        when(repositorioRegistro.buscarPorMail("flor@gmail.com")).thenReturn(new Usuario());
+
+        //when registro usuario con email "flor@gmail.com"
+//        Usuario usuarioCreado =servicioRegistro.registrar("flor@gmail.com", password);
+        //then el registro falla y lanza una exception
+//        assertThat(usuarioCreado, is(notNullValue()));
+
+        assertThrows(UsuarioExistente.class, ()-> servicioRegistro.registrar("flor@gmail.com", password));
     }
 }
